@@ -1,8 +1,8 @@
 import { NextPage, GetStaticProps } from 'next';
-import { Layout } from '@/components/layouts';
 import { pokeAPI } from '@/api';
+import { Layout } from '@/components/layouts';
+import { PokemonList } from '@/components/pokemon';
 import { PokemonsResponse, SmallPokemon } from '@/interfaces';
-import axios from 'axios';
 
 interface Props {
   pokemons: SmallPokemon[];
@@ -14,23 +14,15 @@ const HomePage: NextPage<Props> = ({ pokemons }: Props) => {
       title='Listado de Pokemons'
       description='Lista de pokemons de diferentes generaciones'
     >
-      <ul>
-        {pokemons.map(({ id, name }) => (
-          <li key={id}>
-            #{id} - {name}
-          </li>
-        ))}
-      </ul>
+      <PokemonList pokemons={pokemons} />
     </Layout>
   );
 };
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
-  const {
-    data: { results },
-  } = await pokeAPI.get<PokemonsResponse>('/pokemon?limit=151');
+  const { data } = await pokeAPI.get<PokemonsResponse>('/pokemon?limit=151');
 
-  const pokemons: SmallPokemon[] = results.map((poke, i) => ({
+  const pokemons: SmallPokemon[] = data.results.map((poke, i) => ({
     ...poke,
     id: i + 1,
     img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${

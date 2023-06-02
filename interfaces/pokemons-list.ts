@@ -2,7 +2,7 @@ export interface PokemonsResponse {
     count:    number;
     next?:     string;
     previous?: string;
-    results:  SmallPokemon[];
+    results: SmallPokemon[];
 }
 
 export interface SmallPokemon {
