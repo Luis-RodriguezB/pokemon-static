@@ -20,3 +20,10 @@
     justify-content: center;
     align-items: center;
 }
+
+.pokemon-type {
+    padding: 5px 10px;
+    border-radius: 10px;
+    line-height: 18px;
+    letter-spacing: normal;
+}

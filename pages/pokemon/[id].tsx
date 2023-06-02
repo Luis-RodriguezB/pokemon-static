@@ -1,19 +1,34 @@
+import { useEffect, useState } from 'react';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { Button, Card, Container, Grid, Image, Text } from '@nextui-org/react';
 import { Layout } from '@/components/layouts';
 import { pokeAPI } from '@/api';
 import { Pokemon } from '@/interfaces';
+import { typeColours } from '@/helpers';
+import { localFavorites } from '@/utils';
 
 interface Props {
   pokemon: Pokemon;
 }
 
 const PokemonPage: NextPage<Props> = ({ pokemon }) => {
+  const [isInFavorites, setIsInFavorites] = useState<boolean>(false);
+  const title = pokemon.name[0].toUpperCase() + pokemon.name.slice(1, pokemon.name.length);
+
+  const onToggleFavorite = () => {
+    localFavorites.toggleFavorites(pokemon.id);
+    setIsInFavorites(!isInFavorites);
+  };
+
+  useEffect(() => {
+    setIsInFavorites(localFavorites.existInFavorites(pokemon.id));
+  }, [pokemon.id]);
+
   return (
-    <Layout title='Algun pokemon'>
+    <Layout title={title}>
       <Grid.Container css={{ marginTop: '5px' }} gap={2}>
         <Grid xs={12} sm={4}>
-          <Card isHoverable css={{ padding: '30px' }}>
+          <Card isHoverable css={{ padding: '30px', p: 15 }}>
             <Card.Body>
               <Card.Image
                 src={
@@ -25,6 +40,26 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
                 height={200}
               />
             </Card.Body>
+            <Card.Footer
+              css={{
+                p: 0,
+                paddingRight: 5,
+                display: 'flex',
+                justifyContent: 'end',
+                gap: '10px',
+              }}
+            >
+              {pokemon.types.map(({ type }) => (
+                <Text
+                  css={{ background: typeColours[type.name] || '#777' }}
+                  key={type.name}
+                  transform='capitalize'
+                  className='pokemon-type'
+                >
+                  {type.name}
+                </Text>
+              ))}
+            </Card.Footer>
           </Card>
         </Grid>
 
@@ -37,8 +72,12 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
                 {pokemon.name}
               </Text>
 
-              <Button color="gradient" ghost >
-                Guardar en favoritos
+              <Button
+                color='gradient'
+                ghost={!isInFavorites}
+                onPress={onToggleFavorite}
+              >
+                {isInFavorites ? 'En favoritos' : 'Guardar en favoritos'}
               </Button>
             </Card.Header>
 
@@ -48,25 +87,25 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
               <Container direction='row' display='flex'>
                 <Image
                   src={pokemon.sprites.front_default}
-                  alt={ pokemon.name }
+                  alt={pokemon.name}
                   width={100}
                   height={100}
                 />
                 <Image
                   src={pokemon.sprites.back_default}
-                  alt={ pokemon.name }
+                  alt={pokemon.name}
                   width={100}
                   height={100}
                 />
                 <Image
                   src={pokemon.sprites.front_shiny}
-                  alt={ pokemon.name }
+                  alt={pokemon.name}
                   width={100}
                   height={100}
                 />
                 <Image
                   src={pokemon.sprites.back_shiny}
-                  alt={ pokemon.name }
+                  alt={pokemon.name}
                   width={100}
                   height={100}
                 />
