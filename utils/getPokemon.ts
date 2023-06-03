@@ -13,12 +13,16 @@ interface Response {
 }
 
 export const getPokemon = async (nameOrId: string) => {
-  const { data } = await pokeAPI.get<Pokemon>(`/pokemon/${nameOrId}`);
+  try {
+    const { data } = await pokeAPI.get<Pokemon>(`/pokemon/${nameOrId}`);
 
-  return {
-    id: data.id,
-    name: data.name,
-    sprites: data.sprites,
-    types: data.types,
-  };
+    return {
+      id: data.id,
+      name: data.name,
+      sprites: data.sprites,
+      types: data.types,
+    };
+  } catch (error) {
+    return null;
+  }
 };
