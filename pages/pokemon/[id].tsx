@@ -10,10 +10,9 @@ import {
   Text,
 } from '@nextui-org/react';
 import { Layout } from '@/components/layouts';
-import { pokeAPI } from '@/api';
 import { Pokemon } from '@/interfaces';
 import { typeColours } from '@/helpers';
-import { capitalizeWord, localFavorites } from '@/utils';
+import { capitalizeWord, getPokemon, localFavorites } from '@/utils';
 
 interface Props {
   pokemon: Pokemon;
@@ -132,11 +131,10 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { id } = params as { id: string };
-  const { data } = await pokeAPI.get<Pokemon>(`/pokemon/${id}`);
 
   return {
     props: {
-      pokemon: data,
+      pokemon: await getPokemon(id),
     },
   };
 };

@@ -4,14 +4,13 @@ import { Layout } from '@/components/layouts';
 import { pokeAPI } from '@/api';
 import { Pokemon, PokemonsResponse } from '@/interfaces';
 import { typeColours } from '@/helpers';
-import { capitalizeWord } from '@/utils';
+import { capitalizeWord, getPokemon } from '@/utils';
 
 interface Props {
   pokemon: Pokemon;
 }
 
 export const PokemonByNamePage: NextPage<Props> = ({ pokemon }) => {
-  console.log(pokemon);
   return (
     <Layout title={`Pokemon - ${capitalizeWord(pokemon.name)}`}>
       <Grid.Container css={{ marginTop: '5px' }} gap={2}>
@@ -105,11 +104,10 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { name } = params as { name: string };
-  const { data } = await pokeAPI.get<Pokemon>(`/pokemon/${name}`);
 
   return {
     props: {
-      pokemon: data,
+      pokemon: await getPokemon(name),
     },
   };
 };
